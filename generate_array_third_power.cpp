@@ -2,6 +2,8 @@
 #include <stdint.h>
 #include <vector>
 #include <iostream>
+#include <utility>
+#include <map>
 
 #define POWER 3
 #define MODULUS 17
@@ -10,7 +12,11 @@ using namespace std;
 
 int main()
 {
-	vector<uint32_t> values(MODULUS+1);
+	map <uint32_t, pair<uint32_t,uint32_t>> summap;
+	pair<uint32_t,uint32_t> terms;
+	
+
+	vector<uint32_t> values(MODULUS);
 
 	mpz_t modulus, result, base;
 
@@ -20,7 +26,7 @@ int main()
 
 	mpz_set_ui(modulus, MODULUS);
 
-	for(unsigned int x=1; x<MODULUS+1; x++)
+	for(unsigned int x=1; x<MODULUS; x++)
 	{
 		mpz_set_ui(base,x);
 		mpz_powm_ui(result, base, POWER, modulus);
@@ -28,7 +34,7 @@ int main()
 		values[mpz_get_ui(result)] = x;
 	}
 
-	for (unsigned int y = 1; y < MODULUS+1; y++)
+	for (unsigned int y = 1; y < MODULUS; y++)
 	{
 		cout << y << ": " << values[y] << endl;
 	}
@@ -45,18 +51,26 @@ int main()
 	mpz_init(poweranswer);
 	mpz_init(modanswer);
 	
-	mpz_set_ui(a,0);
-	mpz_set_ui(b,100);
-	mpz_set_ui(subanswer,0);
-	mpz_set_ui(poweranswer,0);
-	mpz_set_ui(modanswer,0);
+	for(uint32_t first_term = 1; z < MODULUS; z++)
+	{
+		mpz_set_ui(a,0);
+		mpz_set_ui(b,z);
+		mpz_set_ui(subanswer,0);
+		mpz_set_ui(poweranswer,0);
+		mpz_set_ui(modanswer,0);
 
-	mpz_pow_ui(poweranswer,b,POWER);
-	mpz_sub(subanswer,a,poweranswer);
-	mpz_mod(modanswer,subanswer,modulus);
+		mpz_pow_ui(poweranswer,b,POWER);
+		mpz_sub(subanswer,a,poweranswer);
+		mpz_mod(modanswer,subanswer,modulus);
 
-	gmp_printf("%Zd\n",modanswer);
+		uint32_t second_term = values[mpz_get_ui(modanswer)];
 
+		if (second_term <= first_term) 
+		{
+			terms.first = first_term;
+			terms.second = second_term;
+		}
+	}
 
 return 0;
 }
