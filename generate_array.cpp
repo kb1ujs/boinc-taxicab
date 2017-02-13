@@ -17,7 +17,7 @@ int main()
 
 	mpz_set_ui(modulus, 16777447);
 
-	for(unsigned int x=1; x<16777449; x++)
+	for(unsigned int x=1; x<16777448; x++)
 	{
 		mpz_set_ui(base,x);
 		mpz_powm_ui(result, base, 5, modulus);
