@@ -5,35 +5,36 @@
 #include "tclap/CmdLine.h"
 
 using namespace std;
-using namespace TCLAP;
+using namespace TCLAP;		// Required to TCLAP command line argument library
 
-unsigned int _intPower;
-unsigned int _intModulus;
+unsigned int _intPower;		// Power of x in a^x + b^x = c^x + d^x, defaults to 5
+unsigned int _intModulus;	// Modulus used to determine search size, defaults to 16777447.
+							// Needs to be a prime that is 7 mod 8 for testing 5th powers.
 
-void parseOptions(int argc, char** argv);
+void parseOptions(int argc, char** argv);	// Get user defined options if provided
 
 int main(int argc, char** argv)
 {
-	parseOptions(argc,argv);
+	parseOptions(argc,argv);				// Get user defined options if provided
 
 	cout << "for intPower we got: " << _intPower << endl << "for intModulus we got: " << _intModulus << endl;	
 
-	vector<uint32_t> values(_intModulus+1);
+	vector<uint32_t> values(_intModulus+1);	// Search array for moduli.  It's _intModulus+1 so we can use it as a lookup table directly
 
-	mpz_t modulus, result, base;
+	mpz_t modulus, result, base;			// mpz_t so that we can use GMP functions to calculate modular powers.
 
-	mpz_init(modulus);
+	mpz_init(modulus);						
 	mpz_init(result);
 	mpz_init(base);
 
-	mpz_set_ui(modulus, _intModulus);
+	mpz_set_ui(modulus, _intModulus);		// 
 
 	for(unsigned int x=1; x<_intModulus+1; x++)
 	{
-		mpz_set_ui(base,x);
+		mpz_set_ui(base,x);								// Calculate modular powers from 1 to _intModulus for lookup table
 		mpz_powm_ui(result, base, _intPower, modulus);
 
-		values[mpz_get_ui(result)] = x;
+		values[mpz_get_ui(result)] = x;					// Stored this way so that values is a lookup table
 	}
 
 	for (unsigned int y = 1; y < 101; y++)
